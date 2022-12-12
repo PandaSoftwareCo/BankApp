@@ -1,4 +1,5 @@
-﻿using BankApp.Application.Common.Interfaces;
+﻿using AutoMapper;
+using BankApp.Application.Common.Interfaces;
 using BankApp.Core.Domain.Entities;
 using BankApp.Data.Contexts;
 using BankApp.Data.Repositories;
@@ -19,14 +20,16 @@ namespace BankApp.Controllers
         private const string transactionListCacheKey = "transactionList";
         private readonly BankContext _context;
         private readonly IBankTransactionRepository _transactionRepository;
+        private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
         private readonly ILogger<BankTransactionsController> _logger;
         //private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public BankTransactionsController(BankContext context, IBankTransactionRepository transactionRepository, IDistributedCache cache, ILogger<BankTransactionsController> logger)
+        public BankTransactionsController(BankContext context, IBankTransactionRepository transactionRepository, IMapper mapper, IDistributedCache cache, ILogger<BankTransactionsController> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _transactionRepository = transactionRepository ?? throw new ArgumentNullException(nameof(transactionRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -59,7 +62,7 @@ namespace BankApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<BankTransaction>> Get(int id)
         {
-            var item = await _transactionRepository.Find(id);
+            var item = await _transactionRepository.FindAsync(id);
 
             if (item == null)
             {
@@ -96,7 +99,7 @@ namespace BankApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                var item = await _transactionRepository.Find(id);
+                var item = await _transactionRepository.FindAsync(id);
                 if (item == null)
                 {
                     return NotFound();
@@ -114,7 +117,7 @@ namespace BankApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _transactionRepository.Find(id);
+            var item = await _transactionRepository.FindAsync(id);
             if (item == null)
             {
                 return NotFound();

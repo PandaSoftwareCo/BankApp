@@ -1,4 +1,5 @@
-﻿using BankApp.Application.Common.Interfaces;
+﻿using AutoMapper;
+using BankApp.Application.Common.Interfaces;
 using BankApp.Core.Domain.Entities;
 using BankApp.Data.Contexts;
 using BankApp.Data.Repositories;
@@ -17,14 +18,16 @@ namespace BankApp.Controllers
     {
         private readonly BankContext _context;
         private readonly IBalanceRepository _balanceRepository;
+        private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
         private readonly ILogger<BalancesController> _logger;
         //private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public BalancesController(BankContext context, IBalanceRepository balanceRepository, IDistributedCache cache, ILogger<BalancesController> logger)
+        public BalancesController(BankContext context, IBalanceRepository balanceRepository, IMapper mapper, IDistributedCache cache, ILogger<BalancesController> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _balanceRepository = balanceRepository ?? throw new ArgumentNullException(nameof(balanceRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -45,7 +48,7 @@ namespace BankApp.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Balance?>> Get(int id)
         {
-            return Ok(await _balanceRepository.Find(id));
+            return Ok(await _balanceRepository.FindAsync(id));
         }
 
         // POST api/<BalancesController>
@@ -79,7 +82,7 @@ namespace BankApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                var item = await _balanceRepository.Find(id);
+                var item = await _balanceRepository.FindAsync(id);
                 if (item == null)
                 {
                     return NotFound();
@@ -97,7 +100,7 @@ namespace BankApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _balanceRepository.Find(id);
+            var item = await _balanceRepository.FindAsync(id);
             if (item == null)
             {
                 return NotFound();

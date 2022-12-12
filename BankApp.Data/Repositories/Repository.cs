@@ -20,7 +20,7 @@ namespace BankApp.Data.Repositories
             return _context.Set<T>().AsAsyncEnumerable();
         }
 
-        public async Task<T?> Find(int id)
+        public async Task<T?> FindAsync(int id)
         {
             return await _context.Set<T>().FindAsync(id);
         }

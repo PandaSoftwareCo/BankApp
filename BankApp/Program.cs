@@ -24,7 +24,7 @@ namespace BankApp
 
             // Add services to the container.
             builder.Configuration.AddEnvironmentVariables(prefix: "BankApp_");
-            builder.Configuration.AddUserSecrets(Assembly.GetExecutingAssembly());
+            builder.Configuration.AddUserSecrets(typeof(Program).Assembly);
 
             builder.AddLogging();
 
@@ -45,6 +45,8 @@ namespace BankApp
             builder.AddVersioning();
 
             builder.AddSwagger();
+
+            builder.Services.AddAutoMapper(typeof(Program).Assembly);
 
             builder.Services.Configure<JsonOptions>(options =>
             {

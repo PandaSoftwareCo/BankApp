@@ -29,6 +29,9 @@ https://learn.microsoft.com/en-us/rest/api/redis/redis/list-keys?tabs=HTTP
 https://stackexchange.github.io/StackExchange.Redis/Configuration.html
 https://www.thecodebuzz.com/connection-resiliency-redis-cache-stackexchange-redi-best-practices/
 
+ELASTIC
+https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+
 https://github.com/PacktPublishing/ASP.NET-Core-and-Vue.js
 https://github.com/PacktPublishing/ASP.NET-Core-and-Vue.js/blob/master/Chapter13/Travel/src/presentation/Travel.WebApi/Startup.cs
 https://github.com/PacktPublishing/ASP.NET-Core-and-Vue.js/blob/master/Chapter13/Travel/src/presentation/Travel.WebApi/Travel.WebApi.csproj
@@ -497,4 +500,17 @@ Pipelines.Sockets.Unofficial.2.2.0
 StackExchange.Redis.2.2.4
 System.Diagnostics.PerformanceCounter.5.0.0
 System.IO.Pipelines.5.0.0
+
+BankApp
+
+Installing:
+
+AutoMapper.12.0.0
+AutoMapper.Extensions.Microsoft.DependencyInjection.12.0.0
+
+BankApp
+
+Installing:
+
+Serilog.Formatting.Elasticsearch.8.4.1
 

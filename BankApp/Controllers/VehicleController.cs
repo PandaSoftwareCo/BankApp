@@ -1,4 +1,5 @@
-﻿using BankApp.Application.Common.Interfaces;
+﻿using AutoMapper;
+using BankApp.Application.Common.Interfaces;
 using BankApp.Core.Domain.Entities;
 using BankApp.Data.Contexts;
 using BankApp.Data.Repositories;
@@ -16,13 +17,15 @@ namespace BankApp.Controllers
     {
         private readonly BankContext _context;
         private readonly IVehicleRepository _vehicleRepository;
+        private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
         private readonly ILogger<VehicleController> _logger;
 
-        public VehicleController(BankContext context, IVehicleRepository vehicleRepository, IDistributedCache cache, ILogger<VehicleController> logger)
+        public VehicleController(BankContext context, IVehicleRepository vehicleRepository, IMapper mapper, IDistributedCache cache, ILogger<VehicleController> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _vehicleRepository = vehicleRepository ?? throw new ArgumentNullException(nameof(vehicleRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -42,7 +45,7 @@ namespace BankApp.Controllers
         [HttpGet("{id}")]
         public async Task<Vehicle?> Get(int id)
         {
-            return await _vehicleRepository.Find(id);
+            return await _vehicleRepository.FindAsync(id);
         }
 
         // POST api/<VehicleController>
@@ -72,7 +75,7 @@ namespace BankApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                var item = await _vehicleRepository.Find(id);
+                var item = await _vehicleRepository.FindAsync(id);
                 if (item == null)
                 {
                     return NotFound();
@@ -90,7 +93,7 @@ namespace BankApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _vehicleRepository.Find(id);
+            var item = await _vehicleRepository.FindAsync(id);
             if (item == null)
             {
                 return NotFound();

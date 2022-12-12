@@ -1,4 +1,6 @@
-﻿using BankApp.Application.Common.Interfaces;
+﻿using AutoMapper;
+using BankApp.Application.Common.Interfaces;
+using BankApp.Application.DTOs;
 using BankApp.Core.Domain.Entities;
 using BankApp.Data.Contexts;
 using BankApp.Data.Repositories;
@@ -18,14 +20,16 @@ namespace BankApp.Controllers
         private const string employeeListCacheKey = "accountList";
         private readonly BankContext _context;
         private readonly IAccountRepository _accountRepository;
+        private readonly IMapper _mapper;
         private readonly IDistributedCache _cache;
         private readonly ILogger<AccountsController> _logger;
         //private static readonly SemaphoreSlim semaphore = new(1, 1);
 
-        public AccountsController(BankContext context, IAccountRepository accountRepository, IDistributedCache cache, ILogger<AccountsController> logger)
+        public AccountsController(BankContext context, IAccountRepository accountRepository, IMapper mapper, IDistributedCache cache, ILogger<AccountsController> logger)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
             _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _cache = cache ?? throw new ArgumentNullException(nameof(cache));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -36,8 +40,7 @@ namespace BankApp.Controllers
         {
             return _accountRepository.Get();
             //return _context.Accounts.AsAsyncEnumerable();
-            //var items = _context.BankTransactions.AsAsyncEnumerable();
-            //await foreach (var item in items)
+            //await foreach (var item in _accountRepository.Get())
             //{
             //    yield return item;
             //}
@@ -45,9 +48,9 @@ namespace BankApp.Controllers
 
         // GET api/<AccountsController>/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Account?>> Get(int id)
+        public async Task<ActionResult<AccountDto?>> Get(int id)
         {
-            return Ok(await _accountRepository.Find(id));
+            return Ok(_mapper.Map<AccountDto>(await _accountRepository.FindAsync(id)));
         }
 
         // POST api/<AccountsController>
@@ -77,7 +80,7 @@ namespace BankApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                var item = await _accountRepository.Find(id);
+                var item = await _accountRepository.FindAsync(id);
                 if (item == null)
                 {
                     return NotFound();
@@ -95,7 +98,7 @@ namespace BankApp.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            var item = await _accountRepository.Find(id);
+            var item = await _accountRepository.FindAsync(id);
             if (item == null)
             {
                 return NotFound();

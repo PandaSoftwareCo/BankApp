@@ -6,7 +6,7 @@ namespace BankApp.Application.Common.Interfaces
     {
         IUnitOfWork UnitOfWork { get; }
         IAsyncEnumerable<T> Get();
-        Task<T?> Find(int id);
+        Task<T?> FindAsync(int id);
         T Add(T item);
         void Update(T item);
         void Delete(T item);
